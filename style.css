@@ -1,0 +1,20 @@
+@charset "UTF-8";
+.fundo {
+    background-color:#ffffff;
+}
+
+.titulo {
+    text-align: center;
+    color: #000000;
+    font-family: monospace;
+    font-size: 400%;
+    font-weight: bolder;
+    font-style: initial;
+}
+
+.box {
+    width: 20%;
+    height: 20%;
+    display: inline-block;
+    
+}
