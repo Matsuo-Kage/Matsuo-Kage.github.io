@@ -1,43 +1,13 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 body {
     background-color: black;
-}
-
-.stats {
-    color: #fff;
-    position: absolute;
-    font-size: 20px;
-    width: 360px;
-    border: 2px solid white;
-    border-radius: 10px;
-}
-.vida {
-    padding: 10px;
-}
-.barravida {
-    width: 300px;
-    background-color: red;
-    height: 30px;
-    border: 10px;
-}
-.mana {
-    padding: 10px;
-}
-.barramana {
-    width: 300px;
-    background-color: blue;
-    height: 30px;
-    border: 10px;
-}
-.stamina {
-    padding: 10px;
-}
-.barrastamina {
-    width: 300px;
-    background-color: green;
-    height: 30px;
-    border: 10px;
-}
-#tela {
-    margin: auto;
-    display: block;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
