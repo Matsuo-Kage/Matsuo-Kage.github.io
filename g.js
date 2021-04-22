@@ -5,18 +5,24 @@ window.onload = function jogo(){
     var ctx = tela.getContext("2d");
 
     //recursos
-    var player = new Image()
-    player.src = "thief.png"
+    var thief = new Image()
+    thief.src = "thief.png"
+    var mage = new Image()
+    mage.src = "mage.png"
+    //mapas
     var grama = new Image()
     grama.src = "Gramado.png"
+    var areia = new Image()
+    areia.src = "Deserto.png"
     var monstro = new Image()
-    monstro.src = "sapo-f.png"
+    monstro.src = "frog0.png"
     var espada = new Image()
     espada.src = "hit.png"
     var nohitsound = document.createElement('audio')
     nohitsound.src = "nohit.mp3"
     var adagatotalsprite
     var countAnim = 0
+    var bater = false
 
     //objetos
     var sprites = []
@@ -35,7 +41,7 @@ window.onload = function jogo(){
     sprites.push(mundo)
 
     var char = {
-        img: player,
+        img: thief,
         x: 0,
         y: 0,
         spriteX: 0,
@@ -45,7 +51,7 @@ window.onload = function jogo(){
         tamX: 160,
         tamY: 160,
         vel: 5,
-        dir: 'up'
+        dir: 'down'
     }
     sprites.push(char)
 
@@ -55,10 +61,10 @@ window.onload = function jogo(){
         y: 300,//Math.floor(Math.random() * mundo.height) + 1,
         spriteX: 0,
         spriteY: 0,
-        width: 40,
-        height: 40,
-        tamX: 80,
-        tamY: 80,
+        width: 160,
+        height: 160,
+        tamX: 160,
+        tamY: 160,
         vel: 5,
         vida: 10
     }
@@ -102,15 +108,17 @@ window.onload = function jogo(){
 
     var adaga = {
         img: espada,
-        x: 1600,
-        y: 1600,
-        spriteX: 4,
-        spriteY: 0,
+        x: 6,
+        y: 160,
+        spriteList: [0, 1, 2, 3, 4],
+        spriteX: 0,
+        spriteY: 4,
         width: 160,
         height: 160,
         tamX: 160,
         tamY: 160,
-        numSprites: 5
+        numSprites: 4,
+        curFrame: 0
     }
     attack.push(adaga)
     
@@ -158,6 +166,21 @@ window.onload = function jogo(){
             case 40:
                 mvDown = true;
                 break;
+            case 67:
+                bater = true;
+                nohitsound.play()
+                if (stamina.pontos >= 10) {
+                    stamina.pontos -= 10
+                }
+                else 
+                    vida.pontos -= 5
+                break;
+            case 88:
+                char.img = mage
+                break;
+            case 90:
+                char.img = thief
+                break;
         
             default:
                 break;
@@ -180,12 +203,8 @@ window.onload = function jogo(){
                 mvDown = false;
                 break;
             case 67:
-                bater()
-                if (stamina.pontos >= 10) {
-                    stamina.pontos -= 10
-                }
-                else 
-                    vida.pontos -= 5
+                bater = false
+                adaga.spriteX = 5
                 break;
             case 88:
                 alert(tempo)
@@ -210,26 +229,86 @@ window.onload = function jogo(){
     }
 
     function update() {
+        //direção do ataque
+        if(bater && char.dir == "left"){
+            adaga.spriteY = 3
+                adaga.spriteX = adaga.curFrame
+                adaga.curFrame++
+                if (adaga.curFrame > adaga.numSprites ) {
+                    adaga.spriteY = 4
+                    adaga.spriteX = 0
+                    adaga.curFrame = -1
+                    bater = false
+                }
+                render()
+        }
+        if(bater && char.dir == "right"){
+            adaga.spriteY = 1
+            adaga.spriteX = adaga.curFrame
+            adaga.curFrame++
+            if (adaga.spriteX > adaga.numSprites ) {
+                adaga.spriteY = 4
+                adaga.spriteX = 0
+                adaga.curFrame = -1
+                bater = false
+            }
+            render()
+        }
+        if(bater && char.dir == "up"){
+            adaga.spriteY = 0
+            adaga.spriteX = adaga.curFrame
+            adaga.curFrame++
+            if (adaga.spriteX > adaga.numSprites ) {
+                adaga.spriteY = 4
+                adaga.spriteX = 0
+                adaga.curFrame = -1
+                bater = false
+            }
+            render()
+        }
+        if(bater && char.dir == "down"){
+            adaga.spriteY = 2
+            adaga.spriteX = adaga.curFrame
+            adaga.curFrame++
+            if (adaga.spriteX > adaga.numSprites ) {
+                adaga.spriteY = 4
+                adaga.spriteX = 0
+                adaga.curFrame = -1
+                bater = false
+            }
+            render()
+        }
+        
+        //movimento do player
         if(mvLeft && !mvRight){
 			char.x -= char.vel;
             char.spriteX = 3;
-            adaga.spriteY = 1;
+            char.dir = 'left'
+            adaga.x = -120
+            adaga.y = 20
 		}
 		if(mvRight && !mvLeft){
 			char.x += char.vel;
             char.spriteX = 1;
-            adaga.spriteY = 3;
+            char.dir = 'right'
+            adaga.x = 120
+            adaga.y = 20
 		}
 		if(mvUp && !mvDown){
 			char.y -= char.vel;
             char.spriteX = 2;
-            adaga.spriteY = 2;
+            adaga.x = 6
+            adaga.y = -160
+            char.dir = 'up'
 		}
 		if(mvDown && !mvUp){
 			char.y += char.vel;
             char.spriteX = 0;
-            adaga.spriteY = 0;
+            adaga.x = 6
+            adaga.y = 160
+            char.dir = 'down'
 		}
+        
 
         //limite do player
         if(char.x < 0){
@@ -274,6 +353,7 @@ window.onload = function jogo(){
 		}
 
         //lógica das barras
+        //vida
         if (vida.pontos > vida.max) {
             vida.pontos = vida.max  
         }
@@ -289,7 +369,7 @@ window.onload = function jogo(){
             magika.pontos = magika.max  
         }
         else
-        if (magika.pontos > 0 && magika.pontos < magika.max) {
+        if (magika.pontos < magika.max) {
             magika.pontos += magika.regen * 0.05
         }
         //stamina
@@ -297,10 +377,21 @@ window.onload = function jogo(){
             stamina.pontos = stamina.max  
         }
         else
-        if (stamina.pontos > 0 && stamina.pontos < stamina.max) {
+        if (stamina.pontos < stamina.max) {
             stamina.pontos += stamina.regen * 0.05
         }
+
+        //portal
+        if (char.x == 3040 && char.y == 3040) {
+            mundo.img = areia
+        }
+        if (char.x == 0 && char.y == 0) {
+            mundo.img = grama
+        }
         
+        var time = 0
+        time++
+        sapo.tamX = sapo.tamY += time/10
     }
     
     function render() {
@@ -317,25 +408,15 @@ window.onload = function jogo(){
             else if(b == 2){ctx.fillStyle = "#00ff00"}
             ctx.fillRect(bar.x + char.x, bar.y + char.y, bar.pontos,bar.largura)
             }
-        /*for (var a in attack) {
-            var atk = attack[a]
-            ctx.drawImage(atk.img, atk.spriteX * atk.width, atk.spriteY * atk.height, atk.height, atk.width, atk.x, atk.y, atk.tamX, atk.tamY)
+        for(var a in attack) {
+        var atk = attack[a]
+        ctx.drawImage(atk.img,atk.spriteX * atk.width,atk.spriteY * atk.height,atk.width,atk.height,atk.x + char.x,atk.y + char.y,atk.tamX,atk.tamY)
         }
-        if(1 = 1){
-
-        }*/    
-        
-        
         ctx.restore()
         }
         loop()
 
-        function bater() {
-            if (1 == 1) {
-            
-            }
-            nohitsound.play()
-            }
+        
         }
 
     
